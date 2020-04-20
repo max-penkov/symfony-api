@@ -110,7 +110,7 @@ class BlogPost
      *
      * @return $this
      */
-    public function setAuthor(User $author): self
+    public function setAuthor($author): self
     {
         $this->author = $author;
         return $this;
@@ -119,7 +119,7 @@ class BlogPost
     /**
      * @return User
      */
-    public function getAuthor(): User
+    public function getAuthor(): ?User
     {
         return $this->author;
     }

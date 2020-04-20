@@ -5,12 +5,13 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ApiResource()
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User
+class User implements UserInterface
 {
     /**
      * @ORM\Id()
@@ -33,10 +34,12 @@ class User
      * @ORM\Column(type="string", length=255)
      */
     private $name;
+
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\BlogPost", mappedBy="author")
      */
     private $posts;
+
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author")
      */
@@ -112,7 +115,7 @@ class User
     /**
      * @return ArrayCollection
      */
-    public function getPosts(): ArrayCollection
+    public function getPosts()
     {
         return $this->posts;
     }
@@ -120,8 +123,31 @@ class User
     /**
      * @return ArrayCollection
      */
-    public function getComments(): ArrayCollection
+    public function getComments()
     {
         return $this->comments;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRoles()
+    {
+        return ['ROLE_USER'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSalt()
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function eraseCredentials()
+    {
     }
 }
