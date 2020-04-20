@@ -8,6 +8,7 @@ use App\Entity\BlogPost;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -30,13 +31,14 @@ class BlogController extends AbstractController
     }
 
     /**
-     * @Route("/{page}", name="blog_list", defaults={"page": 5}, requirements={"page"="\d+"})
-     * @param int     $page
+     * @Route("/{page}", name="blog_list", defaults={"page": 5}, requirements={"page"="\d+"}, methods={"GET"})
+     *
      * @param Request $request
+     * @param int     $page
      *
      * @return JsonResponse
      */
-    public function list(Request $request, $page = 1)
+    public function list(Request $request, int $page)
     {
         $limit = $request->get('limit', 10);
         $repo  = $this->getDoctrine()->getRepository(BlogPost::class);
@@ -53,28 +55,24 @@ class BlogController extends AbstractController
 
     /**
      * @Route("/post/{id}", name="blog_by_id", requirements={"id"="\d+"})
-     * @param $id
+     * @param BlogPost $post
      *
      * @return JsonResponse
      */
-    public function post($id)
+    public function post(BlogPost $post)
     {
-        return $this->json(
-            $this->getDoctrine()->getRepository(BlogPost::class)->find($id)
-        );
+        return $this->json($post);
     }
 
     /**
-     * @Route("/post/{slug}", name="blog_by_slug")
-     * @param string $slug
+     * @Route("/post/{slug}", name="blog_by_slug", methods={"GET"})
+     * @param BlogPost $post
      *
      * @return JsonResponse
      */
-    public function postBySlug(string $slug)
+    public function postBySlug(BlogPost $post)
     {
-        return $this->json(
-            $this->getDoctrine()->getRepository(BlogPost::class)->findBy(['slug' => $slug])
-        );
+        return $this->json($post);
     }
 
     /**
@@ -92,5 +90,20 @@ class BlogController extends AbstractController
         $em->flush();
 
         return $this->json($blogPost);
+    }
+
+    /**
+     * @Route("/post{id}", name="blog_delete", methods={"DELETE"})
+     * @param BlogPost $post
+     *
+     * @return JsonResponse
+     */
+    public function delete(BlogPost $post)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($post);
+        $em->flush();
+
+        return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
 }
