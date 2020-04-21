@@ -11,14 +11,36 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-//use Symfony\Component\Validator\Constraints as Assert;
-
 /**
  * @ApiResource(
- *     itemOperations={"get"},
- *     collectionOperations={"post", "get"},
- *     normalizationContext={
- *          "groups"={"read"}
+ *     itemOperations={
+ *         "get"={
+ *             "access_control"="is_granted('IS_AUTHENTICATED_FULLY')",
+ *             "normalization_context"={
+ *                 "groups"={"get"}
+ *             }
+ *         },
+ *         "put"={
+ *             "access_control"="is_granted('IS_AUTHENTICATED_FULLY') and object == user",
+ *             "denormalization_context"={
+ *                 "groups"={"put"}
+ *             },
+ *             "normalization_context"={
+ *                 "groups"={"get"}
+ *             }
+ *          }
+ *     },
+ *     collectionOperations={
+ *         "get",
+ *         "post"={
+ *             "denormalization_context"={
+ *                 "groups"={"post"}
+ *             },
+ *             "normalization_context"={
+ *                 "groups"={"get"}
+ *             },
+ *             "validation_groups"={"post"}
+ *         }
  *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -30,7 +52,7 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     private $id;
 
@@ -38,6 +60,7 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
      * @Assert\Length(min="6", max="255")
+     * @Groups({"get", "post", "get-comment-with-author", "get-blog-post-with-author"})
      */
     private $username;
 
@@ -49,6 +72,7 @@ class User implements UserInterface
      *     message="Password must be seven characters long and contina at least one digit, one upper case letter, one
      *     lower letter"
      * )
+     * @Groups({"post", "put"})
      */
     private $password;
     /**
@@ -57,26 +81,27 @@ class User implements UserInterface
      *     "this.getPassword() == this.getPasswordRepeat()",
      *     message="Passwords does not match"
      * )
+     * @Groups({"post", "put"})
      */
     private $passwordRepeat;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read"})
      * @Assert\NotBlank()
      * @Assert\Length(min="6", max="255")
+     * @Groups({"get", "post", "put", "get-comment-with-author", "get-blog-post-with-author"})
      */
     private $name;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\BlogPost", mappedBy="author")
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     private $posts;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author")
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     private $comments;
 
@@ -85,6 +110,7 @@ class User implements UserInterface
      * @Assert\NotBlank()
      * @Assert\Email()
      * @Assert\Length(min="10", max="255")
+     * @Groups({"post", "put"})
      */
     private $email;
 
