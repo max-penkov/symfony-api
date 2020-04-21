@@ -29,7 +29,7 @@ final class Version20200421152721 extends AbstractMigration
         $this->addSql('INSERT INTO blog_post (id, author_id, title, published, content, slug) SELECT id, author_id, title, published, content, slug FROM __temp__blog_post');
         $this->addSql('DROP TABLE __temp__blog_post');
         $this->addSql('CREATE INDEX IDX_BA5AE01DF675F31B ON blog_post (author_id)');
-        $this->addSql('ALTER TABLE user ADD COLUMN roles CLOB NOT NULL DEFAULT \'\'');
+        $this->addSql('ALTER TABLE user ADD COLUMN roles CLOB NOT NULL DEFAULT ""');
         $this->addSql('DROP INDEX IDX_9474526CA77FBEAF');
         $this->addSql('DROP INDEX IDX_9474526CF675F31B');
         $this->addSql('CREATE TEMPORARY TABLE __temp__comment AS SELECT id, author_id, blog_post_id, content, published FROM comment');

@@ -21,9 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     collectionOperations={
  *         "get",
  *         "post"={
- *             "normalization_context"={
- *                 "groups"={"get-comment-with-author"}
- *             }
+ *             "access_control"="is_granted('ROLE_COMMENTATOR')"
  *         },
  *         "api_blog_posts_comments_get_subresource"={
  *             "normalization_context"={

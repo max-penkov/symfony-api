@@ -123,7 +123,7 @@ class User implements UserInterface
      * @Assert\NotBlank()
      * @Assert\Email()
      * @Assert\Length(min="10", max="255")
-     * @Groups({"post", "put"})
+     * @Groups({"post", "put", "get-admin"})
      */
     private $email;
 
@@ -253,5 +253,8 @@ class User implements UserInterface
         $this->passwordRepeat = $passwordRepeat;
     }
 
-
+    public function __toString(): string
+    {
+        return $this->name;
+    }
 }

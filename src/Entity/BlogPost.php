@@ -19,10 +19,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *             }
  *         },
  *         "put"={
- *             "access_control"="is_granted('IS_AUTHENTICATED_FULLY') and object.getAuthor() == user"
+ *             "access_control"="is_granted('ROLE_EDITOR') or (is_granted('ROLE_WRITER') and object.getAuthor() == user"
  *         }
  *     },
- *     collectionOperations={"get", "post"}
+ *     collectionOperations={
+ *          "get",
+ *          "post"={
+ *             "access_control"="is_granted('ROLE_WRITER')"
+ *          }
+ *      }
  * )
  */
 class BlogPost
@@ -164,5 +169,10 @@ class BlogPost
     public function getAuthor(): ?User
     {
         return $this->author;
+    }
+
+    public function __toString(): string
+    {
+        return $this->title;
     }
 }
