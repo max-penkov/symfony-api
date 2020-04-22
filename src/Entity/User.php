@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\ResetPasswordAction;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,8 +12,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Controller\ResetPasswordAction;
-
 
 /**
  * @ApiResource(
@@ -159,11 +158,16 @@ class User implements UserInterface
     private $roles;
 
     /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $passwordChangeDate;
+
+    /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"post"})
      * @Assert\Email(groups={"post", "put"})
      * @Assert\Length(min=6, max=255, groups={"post", "put"})
-     * @Groups({"post", "put", "get-admin"})
+     * @Groups({"post", "put", "get-admin", "get-owner"})
      */
     private $email;
 
@@ -326,5 +330,21 @@ class User implements UserInterface
     public function __toString(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPasswordChangeDate()
+    {
+        return $this->passwordChangeDate;
+    }
+
+    /**
+     * @param mixed $passwordChangeDate
+     */
+    public function setPasswordChangeDate($passwordChangeDate): void
+    {
+        $this->passwordChangeDate = $passwordChangeDate;
     }
 }
