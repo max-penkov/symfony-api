@@ -70,7 +70,7 @@ class Image
      */
     public function getUrl()
     {
-        return $this->url;
+        return '/images/' . $this->url;
     }
 
     /**
