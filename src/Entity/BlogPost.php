@@ -77,10 +77,18 @@ class BlogPost
      * @Groups({"get-blog-post-with-author"})
      */
     private $comments;
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Image")
+     * @ORM\JoinTable()
+     * @ApiSubresource()
+     * @Groups({"post"})
+     */
+    private $images;
 
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     /**
@@ -174,5 +182,23 @@ class BlogPost
     public function __toString(): string
     {
         return $this->title;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(Image $image)
+    {
+        $this->images->add($image);
+    }
+
+    public function removeImage(Image $image)
+    {
+        $this->images->removeElement($image);
     }
 }
